@@ -6,12 +6,14 @@ pygame.init()
 # Colores
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-GRAY = (169, 169, 169)  # Gris
+GRAY = (114, 108, 107 )  # Gris
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 
+TEXT_COLOR = (0, 0, 0)  # Negro 100%
+TEXT_OUTLINE_COLOR = (0, 0, 0)  # Negro 10%
 # Dimensiones de la pantalla
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -65,6 +67,8 @@ goalkeeper_image_tutorial = pygame.transform.scale(pygame.image.load('img/jugado
 font_path = 'fonts/retropix.ttf'  # Ruta a tu archivo de fuente
 font_size = 20  # Tamaño de la fuente
 custom_font = pygame.font.Font(font_path, font_size)
+
+font_path2 = 'fonts/PressStart2P-Regular.ttf'
 
 def draw_button(text, x, y, width, height, color, hover_color):
     text_surface = custom_font.render(text, True, BLACK)  # Usar la fuente personalizada
@@ -120,25 +124,48 @@ def second_screen():
 selected_local = None
 selected_visitante = None
 
-def third_screen():
+# Opciones de jugadores por nivel
+jugadores_por_nivel = {
+    1: [
+        [('img/jugadores/amigo_local.png', 'Local'), ('img/jugadores/amigo_visitante.png', 'Visitante')],
+        [('img/jugadores/enemigo_local.png', 'Visitante'), ('img/jugadores/enemigo_visitante.png', 'Local')]
+    ],
+    2: [
+        [('img/jugadores/amigo_local.png', 'Local'), ('img/jugadores/amigo_visitante.png', 'Visitante')],
+        [('img/jugadores/bayern.png', 'Visitante'), ('img/jugadores/bayern_2.png', 'Local')]
+    ],
+    3: [
+        [('img/jugadores/amigo_local.png', 'Local'), ('img/jugadores/amigo_visitante.png', 'Visitante')],
+        [('img/jugadores/juvents.png', 'Visitante'), ('img/jugadores/juvents_2.png', 'Local')]
+    ]
+}
+
+
+def third_screen(level):
     global selected_local, selected_visitante  # Usar variables globales para mantener las elecciones
     play_music(music_files["third_screen"])
     running = True
-    jugador_local_opciones = [('img/jugadores/amigo_local.png', 'Local'), ('img/jugadores/amigo_visitante.png', 'Visitante')]
-    jugador_visitante_opciones = [('img/jugadores/enemigo_local.png', 'Visitante'), ('img/jugadores/enemigo_visitante.png', 'Local')]
-    # Indices de las opciones seleccionadas
+    
+    # Obtener las opciones de jugadores según el nivel
+    jugador_local_opciones, jugador_visitante_opciones = jugadores_por_nivel.get(level, jugadores_por_nivel[1])
+    
+    # Inicialización de los índices de selección
     jugador_local_index = 0
     jugador_visitante_index = 0
+    
     # Cargar las imágenes de los jugadores según el índice seleccionado
     jugador_local_actual = pygame.image.load(jugador_local_opciones[jugador_local_index][0])
     jugador_visitante_actual = pygame.image.load(jugador_visitante_opciones[jugador_visitante_index][0])
+    
     # Ajustar las imágenes a un tamaño adecuado
     jugador_local_actual = pygame.transform.scale(jugador_local_actual, (100, 100))
     jugador_visitante_actual = pygame.transform.scale(jugador_visitante_actual, (100, 100))
+    
     balon_imagenes = ['img/balones/Balon_1.png', 'img/balones/Balon_2.png']
     balon_index = 0
     balon_actual = pygame.image.load(balon_imagenes[balon_index])
     balon_actual = pygame.transform.scale(balon_actual, (30, 30))
+
     while running:
         screen.blit(background_image3, (0, 0))
         screen.blit(jugador_local_actual, (SCREEN_WIDTH // 3 - jugador_local_actual.get_width() // 2, SCREEN_HEIGHT // 2 - jugador_local_actual.get_height() // 2))
@@ -150,6 +177,16 @@ def third_screen():
         draw_button("Tutorial", SCREEN_WIDTH - 500, SCREEN_HEIGHT - 60, 200, 50, GRAY, BLUE)  # Botón de Tutorial
         draw_button(jugador_local_opciones[jugador_local_index][1], SCREEN_WIDTH // 2 - 95, SCREEN_HEIGHT - 450, 80, 40, GRAY, BLUE)
         draw_button(jugador_visitante_opciones[jugador_visitante_index][1], 2 * SCREEN_WIDTH // 3 - 125, SCREEN_HEIGHT - 450, 80, 40, GRAY, RED)
+        
+        # Mostrar el nivel actual en la parte superior
+        # Cargar la fuente RetroPix desde el archivo
+        retro_font = pygame.font.Font(font_path2, 25)
+        retro_font.set_bold(True)
+        # Mostrar el nivel actual en la parte superior
+        level_text = retro_font.render(f"Nivel: {level}", True, GRAY)  # Usar la fuente RetroPix
+        screen.blit(level_text, (SCREEN_WIDTH // 2 - level_text.get_width() // 2, 55))  # Dibujar el texto en la pantalla
+
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -185,6 +222,8 @@ def third_screen():
                 balon_actual = pygame.image.load(balon_imagenes[balon_index])
                 balon_actual = pygame.transform.scale(balon_actual, (30, 30))
         pygame.display.flip()
+
+
 # Función para la pantalla de tutorial
 def tutorial_screen():
     play_music(music_files["tutorial_screen"])  # Puedes agregar música específica para el tutorial si lo deseas

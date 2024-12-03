@@ -155,7 +155,7 @@ if selected_local == "Local":
     enemy_image = pygame.transform.scale(pygame.image.load('img/jugadores/enemigo_local.png'), (Dimensiones.enemy_size, Dimensiones.enemy_size))
 elif selected_visitante == "Visitante":
     # Asignar el jugador visitante como enemigo, el local será el amigo
-    player_image = pygame.transform.scale(pygame.image.load('img/jugadores/amigo_visitante.png'), (player_size, player_size))
+    player_image = pygame.transform.scale(pygame.image.load('img/jugadores/amigo_local.png'), (player_size, player_size))
     enemy_image = pygame.transform.scale(pygame.image.load('img/jugadores/enemigo_local.png'), (Dimensiones.enemy_size, Dimensiones.enemy_size))
 
 def presentation_screen(level):
@@ -286,13 +286,13 @@ def display_perdido_screen():
         pygame.time.Clock().tick(60)
 start_screen()
 second_screen()
-third_screen()
+third_screen(level)
 tutorial_screen()
 presentation_screen(level)
 # Función para pasar al siguiente nivel
 def next_level():
     global current_goalkeeper_enemy_image
-    # Cambiar la imagen del portero enemigo según el nivel actual
+    third_screen(level)# Cambiar la imagen del portero enemigo según el nivel actual
     if level == 1:
         current_goalkeeper_enemy_image = goalkeeper_enemy_images[1]
     elif level == 2:
@@ -428,7 +428,7 @@ while running:
         ball_y = Dimensiones.SCREEN_HEIGHT // 2
         ball_moving = False
         ball_owned = False  
-        if goals_enemy >= 1:  # Si los enemigos marcan 3 goles
+        if goals_enemy >= 2:  # Si los enemigos marcan 2 goles
             display_perdido_screen()
         else:
             start_time = pygame.time.get_ticks() 
